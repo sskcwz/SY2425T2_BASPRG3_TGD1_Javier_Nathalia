@@ -9,9 +9,9 @@ void Player::start()
 	y = 100;
 	width = 0;
 	height = 0;
-	currentSpeed = speedDefault;
 	speedDefault = 2;
 	speedBoost = 5;
+	currentSpeed = speedDefault;
 	
 
 
