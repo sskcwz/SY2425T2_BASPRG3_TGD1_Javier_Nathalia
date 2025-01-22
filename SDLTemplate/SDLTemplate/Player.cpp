@@ -1,5 +1,17 @@
 #include "Player.h"
 
+Player::~Player()
+{
+	// memory manage player
+
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		delete bullets[i];
+	}
+
+	bullets.clear();
+}
+
 void Player::start()
 {
 	texture = loadTexture("gfx/player.png");
@@ -13,14 +25,86 @@ void Player::start()
 	speedBoost = 5;
 	currentSpeed = speedDefault;
 	
+	reloadTime = 8;
+	currentReloadTime = reloadTime;
 
+	secondReloadTime = 16;
+	currentSecondReloadTime = 0;
 
 	// query textuure to set W and H
 	SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+
+	// initialize sound
+	sound = SoundManager::loadSound("sound/334227__jradcoolness__laser.ogg");
 }
 
 void Player::update()
 {
+	if (currentReloadTime > 0)
+	{
+		currentReloadTime--;
+	}
+
+	if (app.keyboard[SDL_SCANCODE_F] &&
+		currentReloadTime <=0)
+	{
+		Bullet* bullet = new Bullet(x + width - 2, 
+									y+ (height/2) - 5,
+									1, 0, 5);
+
+		getScene()->addGameObject(bullet);
+		bullet->start();
+
+		bullets.push_back(bullet);
+
+		SoundManager::playSound(sound);
+
+		currentReloadTime = reloadTime;
+	}
+
+	if (currentSecondReloadTime > 0)
+	{
+		currentSecondReloadTime--;
+	}
+
+	if (app.keyboard[SDL_SCANCODE_G] &&
+		currentSecondReloadTime <= 0)
+	{
+		Bullet* additionalBullet1 = new Bullet(x + width - 2,
+			y + (height / 2) - 25,
+			1, 0, 5);
+
+		Bullet* additionalBullet2 = new Bullet(x + width - 2,
+			y + (height / 2) + 20,
+			1, 0, 5);
+
+		getScene()->addGameObject(additionalBullet1);
+		getScene()->addGameObject(additionalBullet2);
+
+		additionalBullet1->start();
+		additionalBullet2->start();
+
+		bullets.push_back(additionalBullet1);
+		bullets.push_back(additionalBullet2);
+
+		SoundManager::playSound(sound);
+
+		currentSecondReloadTime = secondReloadTime;
+	}
+
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		if (bullets[i]->getPositionX() > SCREEN_WIDTH)
+		{
+			Bullet* bulletToErase = bullets[i];
+			bullets.erase(bullets.begin() + i);
+
+			delete bulletToErase;
+
+			break;
+		}
+	}
+
 	if (app.keyboard[SDL_SCANCODE_W])
 	{
 		y -= currentSpeed;
@@ -56,3 +140,5 @@ void Player::draw()
 {
 	blit(texture, x, y);
 }
+
+
