@@ -28,6 +28,8 @@ void Player::start()
 	reloadTime = 8;
 	currentReloadTime = reloadTime;
 
+	isAlive = true;
+
 	secondReloadTime = 16;
 	currentSecondReloadTime = 0;
 
@@ -36,6 +38,7 @@ void Player::start()
 
 	// initialize sound
 	sound = SoundManager::loadSound("sound/334227__jradcoolness__laser.ogg");
+	sound->volume = 64;
 }
 
 void Player::update()
@@ -50,7 +53,7 @@ void Player::update()
 	{
 		Bullet* bullet = new Bullet(x + width - 2, 
 									y+ (height/2) - 5,
-									1, 0, 5);
+									1, 0, 5, Side::PLAYER_SIDE);
 
 		getScene()->addGameObject(bullet);
 		bullet->start();
@@ -62,6 +65,8 @@ void Player::update()
 		currentReloadTime = reloadTime;
 	}
 
+	if (!isAlive) return;
+
 	if (currentSecondReloadTime > 0)
 	{
 		currentSecondReloadTime--;
@@ -72,11 +77,11 @@ void Player::update()
 	{
 		Bullet* additionalBullet1 = new Bullet(x + width - 2,
 			y + (height / 2) - 25,
-			1, 0, 5);
+			1, 0, 5, Side::PLAYER_SIDE);
 
 		Bullet* additionalBullet2 = new Bullet(x + width - 2,
 			y + (height / 2) + 20,
-			1, 0, 5);
+			1, 0, 5, Side::PLAYER_SIDE);
 
 		getScene()->addGameObject(additionalBullet1);
 		getScene()->addGameObject(additionalBullet2);
@@ -138,6 +143,7 @@ void Player::update()
 
 void Player::draw()
 {
+	if (!isAlive) return;
 	blit(texture, x, y);
 }
 
@@ -149,4 +155,24 @@ int Player::GetPositionX()
 int Player::GetPositionY()
 {
 	return y;
+}
+
+int Player::GetWidth()
+{
+	return width;
+}
+
+int Player::GetHeight()
+{
+	return height;
+}
+
+bool Player::IsAlive()
+{
+	return isAlive;
+}
+
+void Player::DoDeath()
+{
+	isAlive = false;
 }

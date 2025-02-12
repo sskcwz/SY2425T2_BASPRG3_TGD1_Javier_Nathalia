@@ -4,6 +4,10 @@
 #include "Player.h"
 #include "Enemy.h"
 #include <vector>
+#include "text.h"
+#include "Background.h"
+#include "Explosion.h"
+
 
 class GameScene : public Scene
 {
@@ -15,9 +19,16 @@ public:
 	void update();
 private:
 	void Spawn();
+	void DespawnEnemy(Enemy* enemy);
+
+	void DoCollisionLogic();
+	void DoSpawningLogic();
+
+	int points;
 
 	Player* player;
 	Enemy* enemy;
+	Background* backgroundTexture;
 
 	float spawnTime;
 	float currentSpawnTime;

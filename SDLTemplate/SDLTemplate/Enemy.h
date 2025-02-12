@@ -21,6 +21,8 @@ public:
 	int GetPositionX();
 	int GetPositionY();
 	void setPosition(int x, int y);
+	int GetWidth();
+	int GetHeight();
 private:
 	int x;
 	int y;

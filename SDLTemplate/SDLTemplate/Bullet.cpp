@@ -1,17 +1,22 @@
 #include "Bullet.h"
 
-Bullet::Bullet(int positionX, int positionY, float directionX, float directionY, int speed)
+Bullet::Bullet(int positionX, int positionY, float directionX, float directionY, int speed, Side side)
 {
 	this->x = positionX;
 	this->y = positionY;
 	this->directionX = directionX;
 	this->directionY = directionY;
 	this->speed = speed;
+	this->side = side;
+
 }
 
 void Bullet::start()
 {
 	texture = loadTexture("gfx/playerBullet.png");
+
+	if (side == Side::ENEMY_SIDE)
+		texture = loadTexture("gfx/alienBullet.png");
 
 	// initialize variables to avoid garbage values
 
@@ -51,4 +56,9 @@ int Bullet::getWidth()
 int Bullet::getHeight()
 {
 	return height;
+}
+
+Side Bullet::getSide()
+{
+	return side;
 }

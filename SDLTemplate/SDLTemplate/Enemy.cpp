@@ -20,12 +20,12 @@ void Enemy::start()
 
 	width = 0;
 	height = 0;
-	speed = 1;
+	speed = 2;
 
 	reloadTime = 60;
 	currentReloadTime = reloadTime;
 
-	directionChangeTime = rand() % 300 + 150;
+	directionChangeTime = rand() % 300 + 180;
 	currentDirectionChangeTime = directionChangeTime;
 
 	// Query the texture to set our width and height
@@ -33,12 +33,19 @@ void Enemy::start()
 
 	// Initialize sound
 	sound = SoundManager::loadSound("sound/334227__jradcoolness__laser.ogg");
+	sound->volume = 64;
+
 }
 
 void Enemy::update()
 {
 	x += directionX * speed;
 	y += directionY * speed;
+
+	if (y + height > SCREEN_HEIGHT || y < 0)
+	{
+		directionY = -directionY;
+	}
 
 #pragma region Direction Change Logic
 	if (currentDirectionChangeTime > 0)
@@ -67,7 +74,7 @@ void Enemy::update()
 			x, y,
 			&dx, &dy);
 
-		Bullet* bullet = new Bullet (x + width, y - 2 + height / 2, dx, dy, 10);
+		Bullet* bullet = new Bullet (x + width, y - 2 + height / 2, dx, dy, 10, Side::ENEMY_SIDE);
 
 		getScene()->addGameObject(bullet);
 
@@ -121,4 +128,14 @@ void Enemy::setPosition(int xPos, int yPos)
 {
 	this->x = xPos;
 	this->y = yPos;
+}
+
+int Enemy::GetWidth()
+{
+	return width;
+}
+
+int Enemy::GetHeight()
+{
+	return height;
 }

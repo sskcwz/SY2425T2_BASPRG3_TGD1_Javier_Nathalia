@@ -3,6 +3,9 @@
 GameScene::GameScene()
 {
 	// Register and add game objects on constructor
+	backgroundTexture = new Background();
+	this->addGameObject(backgroundTexture);
+	
 	player = new Player();
 	this->addGameObject(player);
 }
@@ -23,17 +26,125 @@ void GameScene::start()
 	{
 		Spawn();
 	}
+
+	initFonts();
+	points = 0;
 }
 
 void GameScene::draw()
 {
 	Scene::draw();
+
+	drawText(110, 20, 255, 255, 255, TEXT_CENTER, "POINTS: %03d", points);
+
+	if (!player->IsAlive())
+	{
+		drawText(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 255, 255, 255, TEXT_CENTER, "GAME OVER!");
+	}
 }
 
 void GameScene::update()
 {
 	Scene::update();
 
+	DoSpawningLogic();
+	DoCollisionLogic();
+}
+
+void GameScene::Spawn()
+{
+	enemy = new Enemy();
+	this->addGameObject(enemy);
+	enemy->SetPlayerTarget(player);
+
+	enemy->setPosition(1300, 300 + (rand() % 350));
+	spawnedEnemies.push_back(enemy);
+}
+
+void GameScene::DespawnEnemy(Enemy* enemy)
+{
+	int index = -1;
+	for (int i = 0; i < spawnedEnemies.size(); i++)
+	{
+		if (enemy == spawnedEnemies[i])
+		{
+			index = i;
+			break;
+		}
+	}
+
+	if (index != -1)
+	{
+		Enemy* enemy = spawnedEnemies[index];
+		spawnedEnemies.erase(spawnedEnemies.begin() + index);
+		delete enemy;
+	}
+}
+
+void GameScene::DoCollisionLogic()
+{
+	// Check for collision
+	for (int i = 0; i < objects.size(); i++)
+	{
+		Bullet* bullet = dynamic_cast<Bullet*>(objects[i]);
+
+		if (bullet != NULL)
+		{
+			// If the bullet is from the enemy side, check againts player
+			if (bullet->getSide() == Side::ENEMY_SIDE)
+			{
+				int collision = checkCollision(
+					player->GetPositionX(), player->GetPositionY(), player->GetWidth(), player->GetHeight(),
+					bullet->getPositionX(), bullet->getPositionY(), bullet->getWidth(), bullet->getHeight());
+
+				if (collision == 1)
+				{
+					float playerX = player->GetPositionX();
+					float playerY = player->GetPositionY();
+
+					Explosion* explosion = new Explosion(playerX, playerY);
+
+					this->addGameObject(explosion);
+					
+					//std::cout << "Player Has Been Hit!" << std::endl;
+					player->DoDeath();
+					break;
+				}
+			}
+
+			// If the bullet is from the player side, check againts ememy
+			else if (bullet->getSide() == Side::PLAYER_SIDE)
+			{
+				for (int i = 0; i < spawnedEnemies.size(); i++)
+				{
+					Enemy* currentEnemy = spawnedEnemies[i];
+
+					int collision = checkCollision(
+						currentEnemy->GetPositionX(), currentEnemy->GetPositionY(), currentEnemy->GetWidth(), currentEnemy->GetHeight(),
+						bullet->getPositionX(), bullet->getPositionY(), bullet->getWidth(), bullet->getHeight());
+
+					if (collision == 1)
+					{
+						float enemyX = enemy->GetPositionX();
+						float enemyY = enemy->GetPositionY();
+
+						Explosion* explosion = new Explosion(enemyX, enemyY);
+
+						this->addGameObject(explosion);
+
+						//std::cout << "Enemy Has Been Hit!" << std::endl;
+						DespawnEnemy(currentEnemy);
+						points++;
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+void GameScene::DoSpawningLogic()
+{
 	if (currentSpawnTime > 0)
 	{
 		currentSpawnTime--;
@@ -63,15 +174,5 @@ void GameScene::update()
 			break;
 		}
 	}
-}
-
-void GameScene::Spawn()
-{
-	enemy = new Enemy();
-	this->addGameObject(enemy);
-	enemy->SetPlayerTarget(player);
-
-	enemy->setPosition(1300, 300 + (rand() % 350));
-	spawnedEnemies.push_back(enemy);
 }
 

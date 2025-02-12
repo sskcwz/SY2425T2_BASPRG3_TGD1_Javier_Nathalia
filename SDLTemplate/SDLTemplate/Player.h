@@ -17,6 +17,10 @@ public:
 	void draw();
 	int GetPositionX();
 	int GetPositionY();
+	int GetWidth();
+	int GetHeight();
+	bool IsAlive();
+	void DoDeath();
 
 private:
 	int x;
@@ -27,6 +31,8 @@ private:
 	int currentSpeed;
 	int speedBoost;
 	int speedDefault;
+
+	bool isAlive;
 
 	float reloadTime;
 	float currentReloadTime;
