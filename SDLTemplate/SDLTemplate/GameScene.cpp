@@ -71,5 +71,7 @@ void GameScene::Spawn()
 	this->addGameObject(enemy);
 	enemy->SetPlayerTarget(player);
 
+	enemy->setPosition(1300, 300 + (rand() % 350));
 	spawnedEnemies.push_back(enemy);
 }
+

@@ -20,12 +20,12 @@ void Enemy::start()
 
 	width = 0;
 	height = 0;
-	speed = 2;
+	speed = 1;
 
 	reloadTime = 60;
 	currentReloadTime = reloadTime;
 
-	directionChangeTime = rand() % 300 + 180;
+	directionChangeTime = rand() % 300 + 150;
 	currentDirectionChangeTime = directionChangeTime;
 
 	// Query the texture to set our width and height
@@ -67,9 +67,7 @@ void Enemy::update()
 			x, y,
 			&dx, &dy);
 
-		Bullet* bullet = new Bullet(x,
-			y + (height / 2) - 5,
-			dx, dy, 5);
+		Bullet* bullet = new Bullet (x + width, y - 2 + height / 2, dx, dy, 10);
 
 		getScene()->addGameObject(bullet);
 
@@ -117,4 +115,10 @@ int Enemy::GetPositionX()
 int Enemy::GetPositionY()
 {
 	return y;
+}
+
+void Enemy::setPosition(int xPos, int yPos)
+{
+	this->x = xPos;
+	this->y = yPos;
 }

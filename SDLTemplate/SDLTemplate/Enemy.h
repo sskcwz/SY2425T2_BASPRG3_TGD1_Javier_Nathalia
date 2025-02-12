@@ -20,6 +20,7 @@ public:
 	void SetPlayerTarget(Player* player);
 	int GetPositionX();
 	int GetPositionY();
+	void setPosition(int x, int y);
 private:
 	int x;
 	int y;
