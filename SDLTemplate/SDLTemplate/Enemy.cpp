@@ -2,8 +2,8 @@
 
 Enemy::Enemy()
 {
-	x = 1000;
-	y = rand() % 400 + 200;
+	x = rand() % 400 + 200;
+	y = 100;
 }
 
 Enemy::~Enemy()
@@ -22,7 +22,7 @@ void Enemy::start()
 	height = 0;
 	speed = 2;
 
-	reloadTime = 60;
+	reloadTime = 70;
 	currentReloadTime = reloadTime;
 
 	directionChangeTime = rand() % 300 + 180;

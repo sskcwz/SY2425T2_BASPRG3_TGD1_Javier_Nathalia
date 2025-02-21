@@ -7,6 +7,7 @@
 #include "text.h"
 #include "Background.h"
 #include "Explosion.h"
+#include "PowerUp.h"
 
 
 class GameScene : public Scene
@@ -24,15 +25,22 @@ private:
 	void DoCollisionLogic();
 	void DoSpawningLogic();
 
+	void spawnPowerUp();
+
 	int points;
 
 	Player* player;
 	Enemy* enemy;
 	Background* backgroundTexture;
+	PowerUp* powerUp;
 
 	float spawnTime;
 	float currentSpawnTime;
 
+	float powerUpSpawnTime;
+	float currentPowerUpSpawnTime;
+
 	std::vector<Enemy*> spawnedEnemies;
+	std::vector<PowerUp*> spawnedPowerUp;
 };
 

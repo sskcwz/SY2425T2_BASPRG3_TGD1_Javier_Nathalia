@@ -57,8 +57,13 @@ void GameScene::Spawn()
 	this->addGameObject(enemy);
 	enemy->SetPlayerTarget(player);
 
-	enemy->setPosition(1300, 300 + (rand() % 350));
+	enemy->setPosition(300 + (rand() % 350), -50);
 	spawnedEnemies.push_back(enemy);
+
+	PowerUp* powerUp = new PowerUp;
+	this->addGameObject(powerUp);
+	powerUp->setPosition(250, 250);
+	spawnedPowerUp.push_back(powerUp);
 }
 
 void GameScene::DespawnEnemy(Enemy* enemy)
@@ -87,6 +92,8 @@ void GameScene::DoCollisionLogic()
 	for (int i = 0; i < objects.size(); i++)
 	{
 		Bullet* bullet = dynamic_cast<Bullet*>(objects[i]);
+
+		PowerUp* powerUp = dynamic_cast<PowerUp*>(objects[i]);
 
 		if (bullet != NULL)
 		{
@@ -140,6 +147,21 @@ void GameScene::DoCollisionLogic()
 				}
 			}
 		}
+
+		if (powerUp != NULL)
+		{
+			int collision = checkCollision(
+				player->GetPositionX(), player->GetPositionY(), player->GetWidth(), player->GetHeight(),
+				powerUp->getPositionX(), powerUp->getPositionY(), powerUp->getWidth(), powerUp->getHeight()
+			);
+
+			if (collision == 1)
+			{
+				player->usePowerUp();
+				powerUp->deletePowerUp();
+			}
+
+		}
 	}
 }
 
@@ -176,3 +198,10 @@ void GameScene::DoSpawningLogic()
 	}
 }
 
+void GameScene::spawnPowerUp()
+{
+	PowerUp* powerUp = new PowerUp;
+	this->addGameObject(powerUp);
+	powerUp->setPosition(300 + (rand() % 350), -30);
+	spawnedPowerUp.push_back(powerUp);
+}

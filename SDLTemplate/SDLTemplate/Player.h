@@ -21,6 +21,7 @@ public:
 	int GetHeight();
 	bool IsAlive();
 	void DoDeath();
+	void usePowerUp();
 
 private:
 	int x;
@@ -39,6 +40,8 @@ private:
 
 	float secondReloadTime;
 	float currentSecondReloadTime;
+
+	int powerUp;
 
 	SDL_Texture* texture;
 	Mix_Chunk* sound;

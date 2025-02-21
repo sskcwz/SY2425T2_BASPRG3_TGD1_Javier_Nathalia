@@ -17,8 +17,8 @@ void Player::start()
 	texture = loadTexture("gfx/player.png");
 
 	// initialize variables to avoid garbage values
-	x = 100;
-	y = 100;
+	x = 230;
+	y = 650;
 	width = 0;
 	height = 0;
 	speedDefault = 2;
@@ -32,6 +32,8 @@ void Player::start()
 
 	secondReloadTime = 16;
 	currentSecondReloadTime = 0;
+
+	powerUp = 0;
 
 	// query textuure to set W and H
 	SDL_QueryTexture(texture, NULL, NULL, &width, &height);
@@ -51,18 +53,69 @@ void Player::update()
 	if (app.keyboard[SDL_SCANCODE_F] &&
 		currentReloadTime <=0)
 	{
-		Bullet* bullet = new Bullet(x + width - 2, 
-									y+ (height/2) - 5,
-									1, 0, 5, Side::PLAYER_SIDE);
-
-		getScene()->addGameObject(bullet);
-		bullet->start();
-
-		bullets.push_back(bullet);
-
 		SoundManager::playSound(sound);
 
-		currentReloadTime = reloadTime;
+		if (powerUp < 1)
+		{
+			
+			Bullet* bullet = new Bullet(x + width / 2,
+										y,
+										0, -1, 10, Side::PLAYER_SIDE);
+
+			getScene()->addGameObject(bullet);
+			bullet->start();
+
+			bullets.push_back(bullet);
+
+			SoundManager::playSound(sound);
+
+			currentReloadTime = reloadTime;
+		}
+		else if (powerUp >= 1)
+		{
+			Bullet* additionalBullet1 = new Bullet(x + width - 50,
+											 	  y, 
+												  0, -1, 10, Side::PLAYER_SIDE);
+
+			Bullet* additionalBullet2 = new Bullet(x + width, 
+												  y, 
+												  0, -1, 10, Side::PLAYER_SIDE);
+
+			getScene()->addGameObject(additionalBullet1);
+			getScene()->addGameObject(additionalBullet2);
+
+			additionalBullet1->start();
+			additionalBullet2->start();
+
+			bullets.push_back(additionalBullet1);
+			bullets.push_back(additionalBullet2);
+
+			SoundManager::playSound(sound);
+
+			currentReloadTime = reloadTime;
+		}
+		else if (powerUp >= 2)
+		{
+			Bullet* additionalBullet1 = new Bullet(x + width - 50,
+												  y, 
+												  0, -1, 10, Side::PLAYER_SIDE);
+			Bullet* additionalBullet2 = new Bullet(x + width,
+												  y, 
+												  0, -1, 10, Side::PLAYER_SIDE);
+
+			getScene()->addGameObject(additionalBullet1);
+			getScene()->addGameObject(additionalBullet2);
+
+			additionalBullet1->start();
+			additionalBullet2->start();
+
+			bullets.push_back(additionalBullet1);
+			bullets.push_back(additionalBullet2);
+
+			SoundManager::playSound(sound);
+
+			currentReloadTime = reloadTime;
+		}
 	}
 
 	if (!isAlive) return;
@@ -72,16 +125,16 @@ void Player::update()
 		currentSecondReloadTime--;
 	}
 
-	if (app.keyboard[SDL_SCANCODE_G] &&
+	/*if (app.keyboard[SDL_SCANCODE_G] &&
 		currentSecondReloadTime <= 0)
 	{
-		Bullet* additionalBullet1 = new Bullet(x + width - 2,
-			y + (height / 2) - 25,
-			1, 0, 5, Side::PLAYER_SIDE);
+		Bullet* additionalBullet1 = new Bullet(x + width - 50,
+			y,
+			0, -1, 10, Side::PLAYER_SIDE);
 
-		Bullet* additionalBullet2 = new Bullet(x + width - 2,
-			y + (height / 2) + 20,
-			1, 0, 5, Side::PLAYER_SIDE);
+		Bullet* additionalBullet2 = new Bullet(x + width,
+			y,
+			0, -1, 10, Side::PLAYER_SIDE);
 
 		getScene()->addGameObject(additionalBullet1);
 		getScene()->addGameObject(additionalBullet2);
@@ -95,7 +148,7 @@ void Player::update()
 		SoundManager::playSound(sound);
 
 		currentSecondReloadTime = secondReloadTime;
-	}
+	}*/
 
 	for (int i = 0; i < bullets.size(); i++)
 	{
@@ -175,4 +228,9 @@ bool Player::IsAlive()
 void Player::DoDeath()
 {
 	isAlive = false;
+}
+
+void Player::usePowerUp()
+{
+	powerUp++;
 }
